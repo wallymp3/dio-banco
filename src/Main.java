@@ -2,8 +2,27 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+// Função para realizar o depósito em uma conta selecionada
+	public static void realizarDeposito(int tipoConta, Cliente clienteSelecionado, int valor) {
+		switch (tipoConta) {
+			case 1:
+				Conta cc = new ContaCorrente(clienteSelecionado); // Conta Corrente
+				cc.depositar(valor);
+				cc.imprimirExtrato();
+				break;
+			case 2:
+				Conta poupanca = new ContaPoupanca(clienteSelecionado); // Conta Poupança
+				poupanca.depositar(valor);
+				poupanca.imprimirExtrato();
+				break;
+			default:
+				System.out.println("Opção de conta inválida.");
+				break;
+		}
+	}
 
 	public static void main(String[] args) {
+		
 		try (Scanner terminal = new Scanner(System.in)) {
 			int escolha = 0;
 			ArrayList<Cliente> clientes = new ArrayList<>();
@@ -48,39 +67,52 @@ public class Main {
 							int contaDeposito = terminal.nextInt();
 							terminal.nextLine(); // Consome a linha restante após nextInt()
 
-							switch (contaDeposito) {
-								case 1:
-									Conta cc = new ContaCorrente(cliente);
-									cc.depositar(valor);
-									cc.imprimirExtrato();
+							realizarDeposito(contaDeposito, cliente, valor);
 
-									break;
-								case 2:
-									Conta poupanca = new ContaPoupanca(cliente);
-									poupanca.depositar(valor);
-									poupanca.imprimirExtrato();
-									break;
-								default:
-									System.out.println("Opção de conta inválida.");
-									break;
-							}
 						}else{
 							System.out.println("\nCliente cadastrado com sucesso!");
-
 						}
 
 						break;
 					case 2:
 						System.out.println("===== CONSULTA DE CLIENTES =====");
 
-						if (clientes.isEmpty()) {
-							System.out.println("Não há clientes cadastrados.\n");
-						} else {
-							// Exibe todos os clientes cadastrados
-							for (Cliente c : clientes) {
-								System.out.println(c + "\n"); // Aqui você vai precisar de um método toString na classe Cliente
-							}
-						}
+                        if (clientes.isEmpty()) {
+                            System.out.println("Não há clientes cadastrados.\n");
+                        } else {
+                            // Exibe todos os clientes cadastrados com índice para seleção
+                            System.out.println("Escolha o cliente para realizar um depósito:");
+                            for (int i = 0; i < clientes.size(); i++) {
+                                System.out.println(i + 1 + " - " + clientes.get(i).getNome());
+                            }
+
+                            int clienteEscolhido = terminal.nextInt();
+                            terminal.nextLine(); // Consome a linha restante após nextInt()
+                            
+                            if (clienteEscolhido > 0 && clienteEscolhido <= clientes.size()) {
+                                Cliente clienteSelecionado = clientes.get(clienteEscolhido - 1); // Ajusta o índice
+
+                                System.out.println("\nCliente selecionado: " + clienteSelecionado.getNome());
+                                System.out.println("Deseja realizar depósito para este cliente (s/n)?");
+                                String depositoEscolhido = terminal.nextLine();
+                                if (depositoEscolhido.equals("s")) {
+                                    System.out.println("Qual o valor do depósito:");
+                                    int valor = terminal.nextInt();
+                                    System.out.println("Escolha a opção de conta:");
+                                    System.out.println("1 - Corrente");
+                                    System.out.println("2 - Poupança");
+                                    int contaDeposito = terminal.nextInt();
+                                    terminal.nextLine(); // Consome a linha restante após nextInt()
+
+									realizarDeposito(contaDeposito, clienteSelecionado, valor);
+
+                                } else {
+                                    System.out.println("Depósito não realizado.");
+                                }
+                            } else {
+                                System.out.println("Opção inválida. Nenhum cliente selecionado.");
+                            }
+                        }
 
 
 						break;
